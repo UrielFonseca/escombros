@@ -1,0 +1,36 @@
+PLANTA TOMATE{
+	PH 6;
+	HUMEDAD 70;
+	color #CF0709;
+	CE 2;
+	RANGOHUMEDAD 10;
+	RangoPh 0.5;  
+}
+PLANTA CHILE{
+	PH 7;
+	HUMEDAD 60;
+	color #CF0709;
+	CE 3;
+	RANGOHUMEDAD 5;
+	RangoPh 0.5;  
+}
+BEGIN {
+     MOVERADELANTE(10);
+     GIRASensores(90);
+     real phAceptable = 6;
+     IF(TOMATE.PH > phAceptable){
+         APLICAR(CAL);
+     }else{
+     	APLICAR(AZUFRE);
+     }
+     
+     IF(tomate.humedad < 60){
+	aspersion;
+     }
+
+	REGISTRAR(MEDIRCE); # registra el nivel de conductividad en el suelo #
+}END
+
+
+
+
