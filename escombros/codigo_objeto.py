@@ -255,6 +255,8 @@ def generar_codigo_objeto(codigo_intermedio: str) -> str:
                 codigo.append("CP R20, R21")
                 codigo.append(operador_a_brancha(op, etiqueta_true))
                 # No ir si condición falsa
+                # Si no se cumple, continuar con siguiente línea
+                #   codigo.append(f"RJMP {etiqueta_true}")                  Linea optimizada no se ocupa porque se debe cumplir
                 continue
 
 

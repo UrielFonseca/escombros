@@ -500,6 +500,8 @@ def p_si_falta_parentesis(p):
     """
     errores_Sinc_Desc.append("Error: Falta -> Paréntesis en la condición 'if' en la línea: " + str(p.lineno(1)))
 
+
+                                                    #####
 # ERRORES WHILE
 def p_mientras_error(p):
     """
@@ -1017,6 +1019,8 @@ def p_compuesto(p):
     """
     p[0] = p[1]
 
+
+######################################
 def p_plantas(p):
     '''
     plantas : planta
@@ -1056,6 +1060,13 @@ def p_lista_parametros(p):
     else:
         p[0] = p[1]
 
+
+    #if len(p) == 3:
+    #for key in p[2]:
+    #    p[1][key] = p[2][key]
+    # p[0] = p[1]
+    #else:
+    # p[0] = p[1]
 
 tipos_parametros = {
     "ph": "real",
@@ -1097,6 +1108,25 @@ def p_parametro(p):
 
     # Guardar el parámetro en la tabla de símbolos con su tipo
     p[0] = {parametro: {"tipo": tipo, "valor": value}}
+    #temp = {}
+    #temp[parametro] = {}
+    #temp[parametro]["tipo"] = tipo
+    #temp[parametro]["valor"] = value
+    #p[0] = temp
+    #
+    #
+
+    ##  tipo_valido = True
+    #  if tipo == "int":
+    # if not isinstance(value, int):
+    #    tipo_valido = False
+    #elif tipo == "real":
+    #  if not isinstance(value, int):
+    #    if not isinstance(value, float):
+    #        tipo_valido = False
+
+    #if not tipo_valido:
+    #errores_semanticos.append(...)
 
 
 def p_planta_parametro(p):
@@ -1118,8 +1148,13 @@ def p_planta_parametro(p):
         errores_semanticos.append(f"Error: La planta '{var_name}' no tiene el parámetro '{parametro}'.")
     else:
         p[0] = ts[var_name]["parametros"][parametro]["valor"]  # Devuelve el valor del parámetro
-
-
+    #planta = ts[var_name]
+    #parametros = planta["parametros"]
+    #info = parametros[parametro]
+    #valor = info["valor"]
+    #p[0] = valor
+    #
+    
 def p_registrar(p):
     'comando : REGISTRAR PARENTESIS_A expresion PARENTESIS_B PUNTOCOMA'
     codigo_intermedio.generar_instruccion('REGISTRAR', p[3])
