@@ -327,20 +327,16 @@ class Compilador(Tk):
 
             print(f"HEX generado correctamente: {hex_file}")
 
-            # Paso 2: Subir al Arduino (opcional)
-            subir = input("¿Quieres subir el .hex al Arduino? (s/n): ").strip().lower()
-            if subir == "s":
-                puerto = input("Puerto del Arduino (ej: COM5 o /dev/ttyUSB0): ").strip()
-                cmd_upload = [
-                    "avrdude",
-                    "-c", "arduino",
-                    "-p", "m328p",
-                    "-P", puerto,
-                    "-b", "115200",
-                    "-U", f"flash:w:{hex_file}"
-                ]
-                print(f"Subiendo con: {' '.join(cmd_upload)}")
-                subprocess.run(cmd_upload, check=True)
+            cmd_upload = [
+                "avrdude",
+                "-c", "arduino",
+                "-p", "m328p",
+                "-P", "COM5",
+                "-b", "115200",
+                "-U", f"flash:w:{hex_file}"
+            ]
+            print(f"Subiendo con: {' '.join(cmd_upload)}")
+            subprocess.run(cmd_upload, check=True)
         else:
             self.guardar_como_archivo()
         

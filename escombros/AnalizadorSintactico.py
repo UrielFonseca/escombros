@@ -678,11 +678,16 @@ def p_expresion_comparacion(p):
     '''
     var = None
     var2 = None
+    if (isinstance(p[1], str) and p[1].lower() == "sensorhumedad"):  # p[3] es un identificador
+        var = p[1]
+        p[1] = 0
+    if (isinstance(p[3], str) and p[3].lower() == "sensorhumedad"):  # p[3] es un identificador
+        var2 = p[3]
+        p[3] = 0
     if isinstance(p[1], str):  # p[1] es un identificador
         var = p[1]
         p[1] = p[1].lower()
         p[1] = ts[p[1]]['valor']
-
     if isinstance(p[3], str) and (p[3] in ts):  # p[3] es un identificador
         var2 = p[3]
         p[3] = p[3].lower()
@@ -692,11 +697,12 @@ def p_expresion_comparacion(p):
             p[1] = var
         if var2 != None:
             p[3] = var2
-        p[0] = (f"{p[1]} {p[2]} {p[3]}")  # Evalúa la comparación dinámicamente
+        p[0] = (f"{p[1]} {p[2]} {p[3]}")
     else:
         errores_semanticos.append(
             f"Error: No se puede comparar '{type(p[1]).__name__}' con '{type(p[3]).__name__}' en la línea {p.lineno(1)}."
         )
+
 
 def p_expresion_comparacion2(p):
     '''
@@ -743,7 +749,9 @@ def p_expresion(p):
     else:
         if isinstance(p[1], str):
             p[1] = p[1].upper()
-        if p[1] in {'SENSORTEMPERATURA', 'SENSORHUMEDAD',
+        if p[1] == 'SENSORHUMEDAD':
+            p[0] = 'SENSORHUMEDAD'
+        elif p[1] in {'SENSORTEMPERATURA',
                     'SENSORCONTADOR', 'MEDIRCE'}:
             p[0] = 0 
         elif p[1] in {'SENSORPH', 'SENSORPESO',
