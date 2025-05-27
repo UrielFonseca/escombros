@@ -724,46 +724,56 @@ def p_expresion_comparacion2(p):
         )
 
 
-def p_expresion(p):
-    """
-    expresion : PARENTESIS_A expresion PARENTESIS_B
-               | NUMERO
-               | REAL
-               | CADENA
-               | COLORRGB
-               | COLORHEX
-               | SENSORTEMPERATURA
-               | SENSORHUMEDAD
-               | SENSORPH
-               | SENSORPESO
-               | REVISARCOLOR
-               | REVISARTAMANO
-               | SENSORCONTADOR
-               | COMPARARPH
-               | COMPARARHUMEDAD
-               | COMPARARTEMP
-               | MEDIRALTURA
-               | MEDIRGLOSOR
-               | MEDIRCE
-    """
-    if len(p) == 4:
-        p[0] = p[2]
-    else:
-        if isinstance(p[1], str):
-            p[1] = p[1].upper()
-        if p[1] in {'SENSORTEMPERATURA', 'SENSORHUMEDAD',
-                    'SENSORCONTADOR', 'MEDIRCE'}:
-            p[0] = 0 
-        elif p[1] in {'SENSORPH', 'SENSORPESO',
-                    'REVISARTAMANO', 'MEDIRALTURA','MEDIRGLOSOR'}:
-            p[0] = 0.0 
-        elif p[1] in {'COMPARARPH', 'COMPARARHUMEDAD',
-                'COMPARARTEMP'}:
-            p[0] = False
-        elif p[1] in {'REVISARCOLOR'}:
-            p[0] = '#ffffff'
+    import arduino_interface
+
+    def p_expresion(p):
+        """
+        expresion : PARENTESIS_A expresion PARENTESIS_B
+                   | NUMERO
+                   | REAL
+                   | CADENA
+                   | COLORRGB
+                   | COLORHEX
+                   | SENSORTEMPERATURA
+                   | SENSORHUMEDAD
+                   | SENSORPH
+                   | SENSORPESO
+                   | REVISARCOLOR
+                   | REVISARTAMANO
+                   | SENSORCONTADOR
+                   | COMPARARPH
+                   | COMPARARHUMEDAD
+                   | COMPARARTEMP
+                   | MEDIRALTURA
+                   | MEDIRGLOSOR
+                   | MEDIRCE
+        """
+        if len(p) == 4:
+            p[0] = p[2]
         else:
-            p[0] = p[1]
+            if isinstance(p[1], str):
+                p[1] = p[1].upper()
+            if p[1] == 'SENSORTEMPERATURA':
+                p[0] = arduino_interface.get_sensor_value() or 0
+            elif p[1] == 'SENSORHUMEDAD':
+                p[0] = arduino_interface.get_sensor_value() or 0
+            elif p[1] == 'SENSORCONTADOR':
+                p[0] = arduino_interface.get_sensor_value() or 0
+            elif p[1] == 'MEDIRCE':
+                p[0] = arduino_interface.get_voltage() or 0.0
+            elif p[1] == 'SENSORPH':
+                p[0] = arduino_interface.get_voltage() or 0.0
+            elif p[1] == 'SENSORPESO':
+                p[0] = arduino_interface.get_voltage() or 0.0
+            elif p[1] in {'REVISARTAMANO', 'MEDIRALTURA','MEDIRGLOSOR'}:
+                p[0] = 0.0 
+            elif p[1] in {'COMPARARPH', 'COMPARARHUMEDAD',
+                    'COMPARARTEMP'}:
+                p[0] = False
+            elif p[1] in {'REVISARCOLOR'}:
+                p[0] = '#ffffff'
+            else:
+                p[0] = p[1]
 
 def p_expresion_booleana(p):
     """

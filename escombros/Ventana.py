@@ -9,6 +9,10 @@ import AnalizadorSintactico as AS
 from AnalizadorSintactico import limpiar_errores
 from PIL import Image, ImageTk  # Importar Pillow
 import re
+import os
+import codigo_objeto as CO
+import subprocess
+import shutil
 
 intermedio = None
 parametros_unicos = []
@@ -116,7 +120,6 @@ class Compilador(Tk):
         limpiar_errores_lex()
         self.title("Compilador => Los Escom-bros <=")
         # Cargar la imagen del logo para la barra de título
-        self.load_icon()
         self.create_widgets()
         self.filename = None  # Variable para almacenar el nombre del archivo actual
         self.text_editor.bind("<KeyRelease>", self.update_line_numbers_and_highlight)
@@ -134,15 +137,6 @@ class Compilador(Tk):
         self.output_console.config(bg="#282c34", fg="white")
         self.line_numbers_text.config(bg="#383c44", fg="white")
     
-    def load_icon(self):
-        # Cargar la imagen del logo
-        logo_original = Image.open("images/monta.png")  # Ruta de la imagen que subiste
-        logo_redimensionado = logo_original.resize((20, 20))  # Ajustar tamaño
-        self.logo_image = ImageTk.PhotoImage(logo_redimensionado)  # Crear referencia a la imagen
-
-        # Cambiar el ícono de la ventana
-        self.iconphoto(True, self.logo_image)
-
     def centrar_ventana(self, ancho, alto):
         # Obtener las dimensiones de la pantalla
         pantalla_ancho = self.winfo_screenwidth()
@@ -302,6 +296,51 @@ class Compilador(Tk):
                 content = self.text_editor.get(1.0, END)
                 file.write(content)
             self.text_editor.edit_modified(False)
+        else:
+            self.guardar_como_archivo()
+
+    def guardar_codigo_objeto(self, codigo_objeto):
+        print("AVRA en:", shutil.which("avra"))
+        
+        if self.filename:
+            nombre_base = os.path.splitext(self.filename)[0]
+            archivo_asm = nombre_base + ".asm"
+
+            # Guardar archivo ASM
+            with open(archivo_asm, "w") as file:
+                file.write(codigo_objeto)
+
+            # Paso 1: Ensamblar usando AVRA
+            cmd_avra = [
+                "avra",
+                archivo_asm
+            ]
+            print(f"Ejecutando: {' '.join(cmd_avra)}")
+            subprocess.run(cmd_avra, check=True)
+
+            hex_file = nombre_base + ".hex"
+            if not os.path.exists(hex_file):
+                # AVRA normalmente genera: nombre_base.hex en el mismo directorio
+                generado = nombre_base.upper() + ".HEX"
+                if os.path.exists(generado):
+                    os.rename(generado, hex_file)
+
+            print(f"HEX generado correctamente: {hex_file}")
+
+            # Paso 2: Subir al Arduino (opcional)
+            subir = input("¿Quieres subir el .hex al Arduino? (s/n): ").strip().lower()
+            if subir == "s":
+                puerto = input("Puerto del Arduino (ej: COM5 o /dev/ttyUSB0): ").strip()
+                cmd_upload = [
+                    "avrdude",
+                    "-c", "arduino",
+                    "-p", "m328p",
+                    "-P", puerto,
+                    "-b", "115200",
+                    "-U", f"flash:w:{hex_file}"
+                ]
+                print(f"Subiendo con: {' '.join(cmd_upload)}")
+                subprocess.run(cmd_upload, check=True)
         else:
             self.guardar_como_archivo()
         
@@ -512,6 +551,7 @@ class Compilador(Tk):
         global intermedio
         intermedio = AS.codigo_intermedio.obtener_codigo()
 
+
         # Convertir a lista ordenada para mantener consistencia
         parametros_unicos = sorted(parametros_unicos)
 
@@ -524,10 +564,9 @@ class Compilador(Tk):
             else:  # Es una variable normal
                 identificadores[var] = {"tipo": data["tipo"], "valor": data["valor"]}
 
-        # # Mostrar los errores Semanticos en la consola de salida
-        # errores_Sem_Desc = AS.errores_Sem_Desc
-        # for error in errores_Sem_Desc:
-        #     self.output_console.insert(END, error + "\n")
+        objeto = CO.generar_codigo_objeto(intermedio)
+        self.guardar_codigo_objeto(objeto)
+
 
 
 if __name__ == "__main__":

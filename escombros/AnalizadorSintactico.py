@@ -3,10 +3,8 @@ import ply.yacc as yacc
 
 #Importar lista de tokens de analizados léxico
 from AnalizadorLexico import tokens
-#Definir lista donde se guarden los errores
+import ast
 
-# Clase para generación de código intermedio
-# Clase para generación de código intermedio
 class GeneradorCodigo:
     def __init__(self):
         self.codigo = []
@@ -42,12 +40,12 @@ class GeneradorCodigo:
     def declarar_planta(self, nombre, parametros):
         """Registra una planta con sus parámetros"""
         self.plantas[nombre.lower()] = parametros
-        self.agregar(f"PLANTA {nombre}", f"Declaración de planta")
+        self.agregar(f"PLANTA {nombre}")
         
         # Generar instrucciones para cada parámetro
         for param, valor in parametros.items():
             valor_real = valor['valor']
-            self.agregar(f"  {param.upper()} {valor_real}", f"Parámetro de planta")
+            self.agregar(f"  {param.upper()} {valor_real}")
             
     def declaracion(self, tipo, id, valor=None):
         """Genera código para declaración de variables"""
@@ -59,23 +57,23 @@ class GeneradorCodigo:
                 planta = partes[0].lower()
                 propiedad = partes[1].lower()
                 temp = self.nuevo_temporal()
-                self.agregar(f"{temp} = {planta}.{propiedad}", f"Acceso a propiedad de planta")
-                self.agregar(f"{tipo} {id} = {temp}", f"Declaración de variable")
+                self.agregar(f"{temp} = {planta}.{propiedad}")
+                self.agregar(f"{tipo} {id} = {temp}")
             else:
-                self.agregar(f"{tipo} {id} = {valor}", f"Declaración de variable")
+                self.agregar(f"{tipo} {id} = {valor}")
         else:
-            self.agregar(f"{tipo} {id}", f"Declaración de variable")
+            self.agregar(f"{tipo} {id}")
         
         return temp
             
     def asignacion(self, id, expresion):
         """Genera código para asignación de variables"""
-        self.agregar(f"{id} = {expresion}", f"Asignación a variable")
+        self.agregar(f"{id} = {expresion}")
 
     def condicion(self, condicion):
         """Genera código para evaluar una condición"""
         temp = self.nuevo_temporal()
-        self.agregar(f"{temp} = {condicion}", f"Evaluación de condición")
+        self.agregar(f"{temp} = {condicion}")
         return temp
         
     def if_inicio(self, condicion):
@@ -86,7 +84,7 @@ class GeneradorCodigo:
             cond_valor = "TRUE" if condicion else "FALSE"
             self.agregar(f"# Condición directa: {cond_valor}")
             cond_temp = self.nuevo_temporal()
-            self.agregar(f"{cond_temp} = {cond_valor}", "Asignación de valor booleano")
+            self.agregar(f"{cond_temp} = {cond_valor}")
         elif isinstance(condicion, str):
             # Condición como expresión (podría ser acceso a prop. planta o comparación)
             if '.' in condicion and ('>' in condicion or '<' in condicion or '==' in condicion or '!=' in condicion):
@@ -99,27 +97,13 @@ class GeneradorCodigo:
                         
                         # Manejar acceso a propiedad si existe
                         if '.' in izq:
-                            planta_prop = izq.split('.')
-                            planta = planta_prop[0].lower()
-                            propiedad = planta_prop[1].lower()
-                            temp_izq = self.nuevo_temporal()
-                            self.agregar(f"{temp_izq} = {planta}.{propiedad}", f"Acceso a propiedad de planta")
-                            izq = temp_izq
-                        
-                        cond_temp = self.nuevo_temporal()
-                        self.agregar(f"{cond_temp} = {izq} {op} {der}", f"Evaluación de condición compleja")
+                            izq = ast.literal_eval(izq)
+                            izq = "".join(izq)
+                        condicion = (f"{izq} {op} {der}")
                         break
-            else:
-                # Condición simple
-                cond_temp = self.nuevo_temporal()
-                self.agregar(f"{cond_temp} = {condicion}", "Evaluación de condición")
-        else:
-            # Para otros tipos como enteros o reales
-            cond_temp = self.nuevo_temporal()
-            self.agregar(f"{cond_temp} = {condicion}", "Evaluación de condición")
             
         etiqueta_falsa = self.nueva_etiqueta()
-        self.agregar(f"IF {cond_temp} == FALSE GOTO {etiqueta_falsa}")
+        self.agregar(f"IF {condicion} GOTO {etiqueta_falsa}")
         return etiqueta_falsa
         
     def if_else(self, etiqueta_falsa):
@@ -234,47 +218,47 @@ class GeneradorCodigo:
         
     def mover_adelante(self, distancia):
         """Genera código para el comando MOVERADELANTE"""
-        self.generar_instruccion('MOVERADELANTE', distancia)
+        self.generar_instruccion('call', 'MOVERADELANTE', distancia)
         
     def mover_atras(self, distancia):
         """Genera código para el comando MOVERATRAS"""
-        self.generar_instruccion('MOVERATRAS', distancia)
+        self.generar_instruccion('call', 'MOVERATRAS', distancia)
         
     def girar_izquierda(self, grados):
         """Genera código para el comando GIRARIZQUIERDA"""
-        self.generar_instruccion('GIRARIZQUIERDA', grados)
+        self.generar_instruccion('call', 'GIRARIZQUIERDA', grados)
         
     def girar_derecha(self, grados):
         """Genera código para el comando GIRARDERECHA"""
-        self.generar_instruccion('GIRARDERECHA', grados)
+        self.generar_instruccion('call', 'GIRARDERECHA', grados)
         
     def girar_sensores(self, grados):
         """Genera código para el comando GIRASENSORES"""
-        self.generar_instruccion('GIRASENSORES', grados)
+        self.generar_instruccion('call', 'GIRASENSORES', grados)
         
     def velocidad(self, valor):
         """Genera código para el comando VELOCIDAD"""
-        self.generar_instruccion('VELOCIDAD', valor)
+        self.generar_instruccion('call', 'VELOCIDAD', valor)
         
     def aplicar(self, compuesto):
         """Genera código para el comando APLICAR"""
-        self.generar_instruccion('APLICAR', compuesto)
+        self.generar_instruccion('call', 'APLICAR', compuesto)
         
     def aspersion(self):
         """Genera código para el comando ASPERSION"""
-        self.generar_instruccion('ASPERSION')
+        self.generar_instruccion('call', 'ASPERSION')
         
     def detener(self):
         """Genera código para el comando DETENER"""
-        self.generar_instruccion('DETENER')
+        self.generar_instruccion('call', 'DETENER')
         
     def alerta(self, mensaje):
         """Genera código para el comando ALERTA"""
-        self.generar_instruccion('ALERTA', mensaje)
+        self.generar_instruccion('call', 'ALERTA', mensaje)
         
     def registrar(self, valor):
         """Genera código para el comando REGISTRAR"""
-        self.generar_instruccion('REGISTRAR', valor)
+        self.generar_instruccion('call', 'REGISTRAR', valor)
         
     def acceso_propiedad_planta(self, planta, propiedad):
         """Genera código para acceso a propiedades de planta"""
@@ -692,14 +676,22 @@ def p_expresion_comparacion(p):
               | expresion MAYORQUE expresion
               | expresion MAYORIGUAL expresion
     '''
+    var = None
+    var2 = None
     if isinstance(p[1], str):  # p[1] es un identificador
+        var = p[1]
         p[1] = p[1].lower()
         p[1] = ts[p[1]]['valor']
 
     if isinstance(p[3], str) and (p[3] in ts):  # p[3] es un identificador
+        var2 = p[3]
         p[3] = p[3].lower()
         p[3] = ts[p[3]]['valor']
-    if isinstance(p[1], (int, float)) and isinstance(p[3], (int, float)):
+    if (isinstance(p[1], (int, float)) or isinstance(ts[p[1][0]]["parametros"][p[1][2]]["valor"], (int, float))) and (isinstance(p[3], (int, float)) or isinstance(ts[p[3][0]]["parametros"][p[3][2]]["valor"], (int, float))):
+        if var != None:
+            p[1] = var
+        if var2 != None:
+            p[3] = var2
         p[0] = (f"{p[1]} {p[2]} {p[3]}")  # Evalúa la comparación dinámicamente
     else:
         errores_semanticos.append(
@@ -1119,7 +1111,7 @@ def p_planta_parametro(p):
     elif parametro not in ts[var_name]["parametros"]:
         errores_semanticos.append(f"Error: La planta '{var_name}' no tiene el parámetro '{parametro}'.")
     else:
-        p[0] = ts[var_name]["parametros"][parametro]["valor"]  # Devuelve el valor del parámetro
+        p[0] = (var_name, p[2], parametro) # ts[var_name]["parametros"][parametro]["valor"]  # Devuelve el valor del parámetro
 
 
 def p_registrar(p):
