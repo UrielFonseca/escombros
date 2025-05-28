@@ -7,14 +7,30 @@ import ast
 
 class GeneradorCodigo:
     def __init__(self):
+        #temp_codigo = []
+        #self.codigo = temp_codigo
         self.codigo = []
+        #valorini = 0
+        #self.etiquetas = valorini
+        #self.temporales = valorini
+
+        #temp_Plantas = {}
+        #self.plantas = temp_plantas
         self.etiquetas = 0
         self.temporales = 0
         self.plantas = {}  # Almacena información de las plantas definidas
         
     def clear(self):
         """Limpia el código intermedio y reinicia contadores"""
+        #temp_codigo2 = []
+        #self.codigo = temp_codigo
         self.codigo = []
+        #valoriniclear = 0
+        #self.etiquetasclear = valorini
+        #self.temporalesclear = valorini
+
+        #temp_Plantasclear = {}
+        #self.plantas = temp_plantas
         self.etiquetas = 0
         self.temporales = 0
         self.plantas = {}
@@ -25,6 +41,13 @@ class GeneradorCodigo:
             self.codigo.append(f"{instruccion.ljust(30)} # {comentario}")
         else:
             self.codigo.append(instruccion)
+
+                            #cambiar mucho salto
+   #         def agregar(self, instruccion, comentario=None):
+   # linea = f"{instruccion}"  
+   # if comentario is not None:
+   #     linea = f"{linea.ljust(30)} # {comentario.strip() + ''}"  
+   #    self.codigo.append(f"{linea}")  =
             
     def generar_instruccion(self, op, arg1=None, arg2=None, arg3=None):
         """Genera instrucción de tres direcciones"""
@@ -38,11 +61,21 @@ class GeneradorCodigo:
         """Genera una nueva etiqueta única"""
         self.etiquetas += 1
         return f"L{self.etiquetas}"
+    
+       # def nuevo_temporal(self):
+       #self.temporales = self.temporales + 1
+       #temp_nombre = f"t{self.temporales}"
+       #return str(temp_nombre) + ""  
 
     def nuevo_temporal(self):
         """Genera un nuevo temporal único"""
         self.temporales += 1
         return f"t{self.temporales}"
+    
+      # def nuevo_etiqueta(self):
+      #self.temporales = self.temporales + 1
+      #temp_nombre = f"t{self.temporales}"
+      # return str(temp_nombre) + ""  
 
     def declarar_planta(self, nombre, parametros):
         """Registra una planta con sus parámetros"""
