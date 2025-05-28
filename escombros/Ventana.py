@@ -14,7 +14,7 @@ import codigo_objeto as CO
 import subprocess
 import shutil
 
-intermedio = None
+intermedio = []
 parametros_unicos = []
 identificadores = {}
 resultados = []
@@ -513,6 +513,10 @@ class Compilador(Tk):
         # Obtiene todo el código del editor
         codigo = self.text_editor.get("1.0", END)
 
+        # Reset intermediate code before compilation
+        import AnalizadorSintactico as AS
+        AS.codigo_intermedio.clear()
+
         # Realiza la compilación utilizando el analizador léxico
         global resultados
         resultados = AL.analisis(codigo)
@@ -562,7 +566,7 @@ class Compilador(Tk):
 
         objeto = CO.generar_codigo_objeto(intermedio)
         self.guardar_codigo_objeto(objeto)
-
+        intermedio = None
 
 
 if __name__ == "__main__":

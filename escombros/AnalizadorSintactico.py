@@ -12,6 +12,13 @@ class GeneradorCodigo:
         self.temporales = 0
         self.plantas = {}  # Almacena información de las plantas definidas
         
+    def clear(self):
+        """Limpia el código intermedio y reinicia contadores"""
+        self.codigo = []
+        self.etiquetas = 0
+        self.temporales = 0
+        self.plantas = {}
+
     def agregar(self, instruccion, comentario=None):
         """Agrega una instrucción al código intermedio"""
         if comentario:
@@ -278,7 +285,7 @@ class GeneradorCodigo:
 
 
 ts = {}
-
+codigo_intermedio = []
 codigo_intermedio = GeneradorCodigo()
 errores_semanticos = []
 errores_Sinc_Desc = []
@@ -291,7 +298,6 @@ def limpiar_errores():
     errores_semanticos = []
     global ts
     ts = {}
-
 lineno = 0
 
 precedence = (
