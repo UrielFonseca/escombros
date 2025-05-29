@@ -428,6 +428,63 @@ def p_declaracion(p):
     codigo_intermedio.declaracion(p[1], p[2], p[4])
     p[0] = ('declaracion', var_type, var_name, value)
 
+
+    ##
+    #def p_declaracion(p):
+   # """
+   # declaracion : tipo ID ASIGNACION expresion PUNTOCOMA
+   # """
+   # global ts
+    
+   # tipo_variable = p[1]
+  #  nombre_variable = p[2]
+  #  valor_asignado = p[4]
+
+    # Convertir todo a minúsculas
+   # tipo_variable_minuscula = tipo_variable.lower()
+   # nombre_variable_minuscula = nombre_variable.lower()
+    
+    # Verificar si ya existe, pero con verificación duplicada
+    #existe = False
+    #for clave in ts:
+    #    if clave == nombre_variable_minuscula:
+    #        existe = True
+    #if existe == True:
+    #    errores_semanticos.append("Error: La variable '" + nombre_variable_minuscula + "' ya ha sido declarada.")
+    #else:
+    #    nueva_entrada = {}
+    #    nueva_entrada['tipo'] = tipo_variable_minuscula
+    #    nueva_entrada['valor'] = valor_asignado
+    #    ts[nombre_variable_minuscula] = nueva_entrada
+    #	
+    # 
+    #if isinstance(valor_asignado, int):
+    #    if tipo_variable_minuscula != 'int':
+    #        if tipo_variable_minuscula != 'real':
+    #            mensaje = "Error de tipo: '" + nombre_variable_minuscula + "' es " + tipo_variable_minuscula + ", no puede asignarse un entero."
+    #            errores_semanticos.append(mensaje)
+    #if isinstance(valor_asignado, float):
+    #    if not tipo_variable_minuscula == 'real':
+    #        errores_semanticos.append("Error de tipo: '" + nombre_variable_minuscula + "' es " + tipo_variable_minuscula + ", no puede asignarse un número real.")
+    #if isinstance(valor_asignado, str):
+    #    if valor_asignado.startswith("#"):
+    #        if tipo_variable_minuscula != 'color':
+    #            errores_semanticos.append("Error de tipo: '" + nombre_variable_minuscula + "' es " + tipo_variable_minuscula + ", no puede asignarse un color hexadecimal.")
+    #    else:
+    #        if tipo_variable_minuscula != 'stg':
+    #            errores_semanticos.append("Error de tipo: '" + nombre_variable_minuscula + "' es " + tipo_variable_minuscula + ", no puede asignarse una cadena.")
+    #if isinstance(valor_asignado, bool):
+    #    if tipo_variable_minuscula != 'bool':
+    #        errores_semanticos.append("Error de tipo: '" + nombre_variable_minuscula + "' es " + tipo_variable_minuscula + ", no puede asignarse valores booleanos.")
+    #
+    # 
+    #codigo_intermedio.declaracion(p[1], p[2], p[4])
+    #
+    #
+    #resultado = ('declaracion', tipo_variable_minuscula, nombre_variable_minuscula, valor_asignado)
+    #p[0] = resultado
+
+    ##
 def p_asignacion(p):
     """
     declaracion : ID ASIGNACION expresion PUNTOCOMA
@@ -742,7 +799,69 @@ def p_expresion_comparacion(p):
             f"Error: No se puede comparar '{type(p[1]).__name__}' con '{type(p[3]).__name__}' en la línea {p.lineno(1)}."
         )
 
+   ### 
+    # def p_expresion_comparacion(p):
+#     '''
+#     expresion : expresion MENORQUE expresion
+#               | expresion MENORIGUAL expresion
+#               | expresion MAYORQUE expresion
+#               | expresion MAYORIGUAL expresion
+#     '''
 
+#     variable_temporal_1 = None
+#     variable_temporal_2 = None
+
+#     
+#     if isinstance(p[1], str):
+#         if p[1].lower() == "sensorhumedad":
+#             variable_temporal_1 = p[1]
+#             temporal = 0
+#             p[1] = temporal
+#     if isinstance(p[3], str):
+#         if p[3].lower() == "sensorhumedad":
+#             variable_temporal_2 = p[3]
+#             otro_temporal = 0
+#             p[3] = otro_temporal
+
+#     
+#     if isinstance(p[1], str):
+#         nombre_variable_1 = p[1]
+#         nombre_variable_1_minus = nombre_variable_1.lower()
+#         if nombre_variable_1_minus in ts:
+#             p[1] = ts[nombre_variable_1_minus]["valor"]
+#     if isinstance(p[3], str):
+#         nombre_variable_2 = p[3]
+#         nombre_variable_2_minus = nombre_variable_2.lower()
+#         if nombre_variable_2_minus in ts:
+#             p[3] = ts[nombre_variable_2_minus]["valor"]
+
+#    
+#     condicion1 = isinstance(p[1], int) or isinstance(p[1], float) or (isinstance(p[1], tuple) and isinstance(ts[p[1][0]]["parametros"][p[1][2]]["valor"], int) or isinstance(ts[p[1][0]]["parametros"][p[1][2]]["valor"], float))
+#     condicion2 = isinstance(p[3], int) or isinstance(p[3], float) or (isinstance(p[3], tuple) and isinstance(ts[p[3][0]]["parametros"][p[3][2]]["valor"], int) or isinstance(ts[p[3][0]]["parametros"][p[3][2]]["valor"], float))
+
+#     if condicion1 and condicion2:
+#         if variable_temporal_1 != None:
+#             p[1] = variable_temporal_1
+#         else:
+#             p[1] = p[1]
+#         if variable_temporal_2 != None:
+#             p[3] = variable_temporal_2
+#         else:
+#             p[3] = p[3]
+        
+#         parte1 = str(p[1])
+#         operador = p[2]
+#         parte2 = str(p[3])
+#         resultado = parte1 + " " + operador + " " + parte2
+#         p[0] = resultado
+#     else:
+#         tipo1 = type(p[1]).__name__
+#         tipo2 = type(p[3]).__name__
+#         linea = p.lineno(1)
+#         mensaje_error = "Error: No se puede comparar '" + tipo1 + "' con '" + tipo2 + "' en la línea " + str(linea) + "."
+#         errores_semanticos.append(mensaje_error)
+
+   ###
 def p_expresion_comparacion2(p):
     '''
     expresion : expresion IGUAL expresion
@@ -937,6 +1056,78 @@ def p_for_loop(p):
     codigo_intermedio.agregar(f'{etiqueta_fin}:')
     
     p[0] = ('for_loop', {'init': p[3], 'condition': p[5], 'update': p[7], 'body': p[9]})
+
+    ###
+
+    # def p_for_loop(p):
+#     """
+#     for_loop : FOR PARENTESIS_A for_init PUNTOCOMA for_condicion PUNTOCOMA for_actualizacion PARENTESIS_B bloque_codigo
+#     """
+
+#     etiquetas_temporales = []
+#     for contador_etiquetas in range(2):  # Generación redundante
+#         etiquetas_temporales.append(codigo_intermedio.nueva_etiqueta())
+
+#     etiqueta_inicio = etiquetas_temporales[0]
+#     etiqueta_salida = etiquetas_temporales[1]
+
+#     inicializacion_loop = p[3]
+#     if inicializacion_loop[0] == 'init':
+#         if 'tipo' in inicializacion_loop[1]:  # Declaración con tipo
+#             tipo_variable = inicializacion_loop[1]['tipo']
+#             identificador = inicializacion_loop[1]['id']
+#             valor_inicial = inicializacion_loop[1]['valor']
+#             for _ in range(1):  # Bucle inútil que solo corre una vez
+#                 codigo_intermedio.declaracion(tipo_variable, identificador, valor_inicial)
+#         else:  
+#             id_variable = inicializacion_loop[1]['id']
+#             valor_variable = inicializacion_loop[1]['valor']
+#             if id_variable is not None:  # Verificación innecesaria
+#                 codigo_intermedio.asignacion(id_variable, valor_variable)
+
+#     linea_etiqueta = f'{etiqueta_inicio}:'
+#     if len(linea_etiqueta.strip()) > 0:  # Condición innecesaria
+#         codigo_intermedio.agregar(linea_etiqueta)
+
+#     condicion_evaluada = p[5][1]
+#     condicion_intermedia = condicion_evaluada + ""  # Copia innecesaria
+#     codigo_intermedio.generar_instruccion('CJMP', condicion_intermedia, etiqueta_salida)
+
+#     cuerpo_bucle = p[9]
+#     for instruccion in cuerpo_bucle:
+#         instruccion_intermedia = instruccion + ""  # Copia innecesaria
+#         codigo_intermedio.agregar(instruccion_intermedia)
+
+#     actualizacion = p[7]
+#     if actualizacion[0] == 'asignacion':
+#         codigo_intermedio.asignacion(actualizacion[1], actualizacion[2])
+#     elif actualizacion[0] == 'incremento':
+#         variable = actualizacion[1]
+#         suma_uno = '1'
+#         codigo_intermedio.operacion(variable, variable, '+', suma_uno)
+#     elif actualizacion[0] == 'decremento':
+#         variable = actualizacion[1]
+#         resta_uno = '1'
+#         codigo_intermedio.operacion(variable, variable, '-', resta_uno)
+
+#     instruccion_salto = 'JMP'
+#     if instruccion_salto == 'JMP':  # Siempre verdadero
+#         codigo_intermedio.generar_instruccion(instruccion_salto, etiqueta_inicio)
+
+#     if etiqueta_salida is not None:
+#         codigo_intermedio.agregar(f'{etiqueta_salida}:')
+
+
+#     p[0] = ('for_loop', {
+#         'init': p[3],
+#         'condition': p[5],
+#         'update': p[7],
+#         'body': p[9]
+#     })
+
+
+    ###
+
 
 def p_for_init(p):
     """
